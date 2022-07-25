@@ -1,0 +1,92 @@
+<p id="notice"><%= notice %></p>
+
+<h1>Word Nets</h1>
+
+
+<table>
+  <thead>
+    <tr>
+      <th>Keyword</th>
+      <th colspan="3"></th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <tr>
+      <td>
+        <input class="form-control" id="search" type="input"></input>
+      </td>
+    </tr>
+
+    <td>
+      <button class="btn btn-primary" id="submit">Search</button>
+    </td>
+
+  </tbody>
+
+</table>
+
+<div class="">
+  <ul class="response">
+  </ul>
+</div>
+
+<br>
+
+
+<script>
+  $("#submit").click(function(){
+    $.ajax({
+      type: "POST",
+      url: "/word_nets/search",
+      data: { search: $("#search").val() },
+      success: function(data){
+        $(".response").empty();
+        if(data.success){
+          $.each(data.data,  function(index, val){
+            $(".response").append($("<li class='synnet' data-index='"+index+"'><a href='javascript:void(0)' class='synnet_submit'>"+val+"</a></li>"))
+          })
+        }
+      },
+      fail: function(data){
+        alert("error!")
+      }
+    })
+  })
+
+  $(document).on("click", ".synnet_submit", function(){
+    $.ajax({
+      type: "POST",
+      url: "/word_nets/hypernym",
+      data: { search: $("#search").val(), index: $(this).closest("li").attr("data-index") },
+      success: function(data){
+        if(data.success){
+          var expand_synnets = data.data.expand_synnets
+          var results = data.data.highlight_datas
+          var index = data.data.index;
+          var selected_li = $("li[data-index="+index+"]");
+          var selected_a = $($(selected_li).find("a")[0])
+          // $($(selected_li).find("a")[0]).empty()
+          $.each(expand_synnets, function(i, val){
+            var index = parseInt(i)
+            if(index == 0){
+              $(selected_a).append($("<ul class='nested index-"+i+"'></ul>"));
+              $(selected_a).find($("ul.nested.index-"+index+"")).append($("<li>"+val.gloss+"</li>"))
+            }else{
+              $(selected_a).find($("ul.nested.index-"+(index-1)+"")).find("li").append($("<ul class='nested index-"+index+"'></ul>"))
+              $(selected_a).find($("ul.nested.index-"+index+"")).append($("<li>"+val.gloss+"</li>"))
+            }
+          })
+
+          $(selected_a).append($("<ul class='one_look_response'>onelook results of "+ data.data.seleted_word+": </ul><br/>"));
+          $.each(results, function(i, v){
+            $(selected_a).find("ul.one_look_response").append($("<li>"+v+"</li>"))
+          })
+        }
+      },
+      fail: function(data){
+        alert("error!")
+      }
+    })
+  })
+</script>

@@ -1,0 +1,22 @@
+<%= form_with(model: word_net) do |form| %>
+  <% if word_net.errors.any? %>
+    <div id="error_explanation">
+      <h2><%= pluralize(word_net.errors.count, "error") %> prohibited this word_net from being saved:</h2>
+
+      <ul>
+        <% word_net.errors.each do |error| %>
+          <li><%= error.full_message %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="field">
+    <%= form.label :keyword %>
+    <%= form.text_field :keyword %>
+  </div>
+
+  <div class="actions">
+    <%= form.submit %>
+  </div>
+<% end %>
