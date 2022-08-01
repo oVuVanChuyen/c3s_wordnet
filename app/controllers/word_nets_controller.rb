@@ -29,15 +29,15 @@ class WordNetsController < ApplicationController
     end
 
     seleted_word = data[1][:word][0]
+    prefix = params[:prefix].downcase
 
-    onelook = search_onelook(seleted_word)
-    highlight_results = onelook.first(5).select{|x| x["tags"].include?("syn")}
-    highlight_datas = highlight_results.map{|x| x["word"]}
-
+    onelook = search_onelook(seleted_word, prefix)
+    onelook_res = onelook.first(50).map{|x| { word: x["word"], syn: x["tags"].include?("syn").to_s} }
+    onelook_res.shift()
     render json: { success: true, data: {
       expand_synnets: data,
       seleted_word: seleted_word,
-      highlight_datas: highlight_datas,
+      onelook_res: onelook_res,
       index: index
     }}
     # concatenated_string = "['purpose of' #{seleted_word}]"
@@ -108,8 +108,8 @@ class WordNetsController < ApplicationController
     params.require(:word_net).permit(:keyword)
   end
 
-  def search_onelook(seleted_word)
-    url = "https://api.onelook.com/words?ml=%5B%22purpose%20of%22%20#{seleted_word}%5D&qe=ml&md=dpfcy&max=500&rif=1&csm=100&k=olthes_r4"
+  def search_onelook(seleted_word, prefix)
+    url = "https://api.onelook.com/words?ml=%5B%22#{prefix}%20of%22%20#{seleted_word}%5D&qe=ml&md=dpfcy&max=500&rif=1&csm=100&k=olthes_r4"
     uri = URI(url)
     res = Net::HTTP.get_response(uri)
     return JSON.parse(res.body)

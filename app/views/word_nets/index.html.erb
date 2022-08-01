@@ -7,7 +7,7 @@
   <thead>
     <tr>
       <th>Keyword</th>
-      <th colspan="3"></th>
+      <th colspan="3">Prefix</th>
     </tr>
   </thead>
 
@@ -16,19 +16,41 @@
       <td>
         <input class="form-control" id="search" type="input"></input>
       </td>
+
+      <td>
+        <input class="form-control" id="prefix" type="input" value="purpose"></input>
+      </td>
     </tr>
-
-    <td>
-      <button class="btn btn-primary" id="submit">Search</button>
-    </td>
-
+    <tr>
+      <td>
+        <button class="btn btn-primary" id="submit">Search</button>
+      </td>
+      <td>
+      </td>
+    </tr>
   </tbody>
 
 </table>
-
+<br>
 <div class="">
+  <h5>1. Execute WordNet Search: </h5>
   <ul class="response">
   </ul>
+
+  <h5>2. Query Wordnet for inherited hypernynm of the select entry </h5>
+  <ul class="hypernynm_tree">
+  </ul>
+
+  <h5>3. Show the phase "prefix + selected hypernym": </h5>
+  <span class="show_selected_hypernym">
+  </span>
+
+  <br/><br/>
+
+  <h5>4. Query OneLook reverse dictionary for the phase: </h5>
+  <ul class="query_onelook">
+  </ul>
+
 </div>
 
 <br>
@@ -36,6 +58,19 @@
 
 <script>
   $("#submit").click(function(){
+    $("ul.query_onelook").empty();
+    $(".show_selected_hypernym").empty();
+    $(".hypernynm_tree").empty();
+
+    if($("#prefix").val() == '' || $("#prefix").val() == undefined){
+      alert("Prefix cannot be empty")
+      return
+    }
+
+    if($("#search").val() == '' || $("#search").val() == undefined){
+      alert("Keyword cannot be empty")
+      return
+    }
     $.ajax({
       type: "POST",
       url: "/word_nets/search",
@@ -43,6 +78,7 @@
       success: function(data){
         $(".response").empty();
         if(data.success){
+          $(".hypernynm_tree").empty();
           $.each(data.data,  function(index, val){
             $(".response").append($("<li class='synnet' data-index='"+index+"'><a href='javascript:void(0)' class='synnet_submit'>"+val+"</a></li>"))
           })
@@ -55,17 +91,26 @@
   })
 
   $(document).on("click", ".synnet_submit", function(){
+    $("ul.query_onelook").empty();
+    $(".show_selected_hypernym").empty();
+    $(".hypernynm_tree").empty();
+
+    if($("#prefix").val() == '' || $("#prefix").val() == undefined){
+      alert("Prefix cannot be empty")
+      return
+    }
     $.ajax({
       type: "POST",
       url: "/word_nets/hypernym",
-      data: { search: $("#search").val(), index: $(this).closest("li").attr("data-index") },
+      data: { search: $("#search").val(), index: $(this).closest("li").attr("data-index"), prefix: $("#prefix").val() },
       success: function(data){
         if(data.success){
           var expand_synnets = data.data.expand_synnets
-          var results = data.data.highlight_datas
+          var results = data.data.onelook_res
           var index = data.data.index;
-          var selected_li = $("li[data-index="+index+"]");
-          var selected_a = $($(selected_li).find("a")[0])
+          // var selected_li = $("li[data-index="+index+"]");
+          var selected_a = $(".hypernynm_tree")
+          selected_a.empty();
           // $($(selected_li).find("a")[0]).empty()
           $.each(expand_synnets, function(i, val){
             var index = parseInt(i)
@@ -78,9 +123,18 @@
             }
           })
 
-          $(selected_a).append($("<ul class='one_look_response'>onelook results of "+ data.data.seleted_word+": </ul><br/>"));
+          var seleted_word = data.data.seleted_word
+          var prefix = "["+ $("#prefix").val() +" of "+seleted_word+"]";
+          $(".show_selected_hypernym").text(prefix);
+
+
+          // $(selected_a).append($("<ul class='one_look_response'>onelook results of "+ data.data.seleted_word+": </ul><br/>"));
           $.each(results, function(i, v){
-            $(selected_a).find("ul.one_look_response").append($("<li>"+v+"</li>"))
+            if(v["syn"] == "true"){
+              $("ul.query_onelook").append($("<li class='highlight'><span>"+v['word']+"</span></li>"))
+            }else{
+              $("ul.query_onelook").append($("<li>"+v['word']+"</li>"))
+            }
           })
         }
       },
