@@ -8,7 +8,7 @@ class WordNetsController < ApplicationController
   end
 
   def search
-    keyword = params[:search].downcase
+    keyword = params[:search].to_s.downcase.strip
     lemma = WordNet::Lemma.find(keyword, :noun)
     synnets = lemma.synsets.map{|x| x.gloss}
     render json: { success: true, data: synnets }
@@ -29,7 +29,7 @@ class WordNetsController < ApplicationController
     end
 
     seleted_word = data[1][:word][0]
-    prefix = params[:prefix].downcase
+    prefix = params[:prefix].to_s.downcase.strip
 
     onelook = search_onelook(seleted_word, prefix)
     onelook_res = onelook.first(50).map{|x| { word: x["word"], syn: x["tags"].include?("syn").to_s} }
@@ -109,7 +109,7 @@ class WordNetsController < ApplicationController
   end
 
   def search_onelook(seleted_word, prefix)
-    url = "https://api.onelook.com/words?ml=%5B%22#{prefix}%20of%22%20#{seleted_word}%5D&qe=ml&md=dpfcy&max=500&rif=1&csm=100&k=olthes_r4"
+    url = "https://api.onelook.com/words?ml=#{prefix}%20#{seleted_word}&qe=ml&md=dpfcy&max=500&rif=1&csm=100&k=olthes_r4"
     uri = URI(url)
     res = Net::HTTP.get_response(uri)
     return JSON.parse(res.body)
