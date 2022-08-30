@@ -9,14 +9,14 @@ class WordNetsController < ApplicationController
 
   def search
     keyword = params[:search].to_s.downcase.strip
-    lemma = WordNet::Lemma.find(keyword, :noun)
+    lemma = WordNet::Lemma.find_all(keyword).first
     synnets = lemma.synsets.map{|x| x.gloss}
     render json: { success: true, data: synnets }
   end
 
   def hypernym
     keyword = params[:search].downcase
-    lemma = WordNet::Lemma.find(keyword, :noun)
+    lemma = WordNet::Lemma.find_all(keyword).first
     synnets = lemma.synsets
     index = params[:index]
     selected_synnet = synnets[index.to_i]
