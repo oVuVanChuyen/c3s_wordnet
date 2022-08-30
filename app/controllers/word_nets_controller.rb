@@ -29,20 +29,56 @@ class WordNetsController < ApplicationController
     end
 
     seleted_word = data[1][:word][0]
-    prefix = params[:prefix].to_s.downcase.strip
+    prefix1 = params[:prefix1].to_s.downcase.strip
+    prefix2 = params[:prefix2].to_s.downcase.strip
+    prefix3 = params[:prefix3].to_s.downcase.strip
+    prefix4 = params[:prefix4].to_s.downcase.strip
+    prefix5 = params[:prefix5].to_s.downcase.strip
+    prefix6 = params[:prefix6].to_s.downcase.strip
 
-    onelook = search_onelook(seleted_word, prefix)
-    onelook_res = onelook.first(50).map{|x| { word: x["word"], syn: x["tags"].include?("syn").to_s} }
-    onelook_res.shift()
+    onelook1 = search_onelook(seleted_word, prefix1)
+    onelook2 = search_onelook(seleted_word, prefix2)
+    onelook3 = search_onelook(seleted_word, prefix3)
+    onelook4 = search_onelook(seleted_word, prefix4)
+    onelook5 = search_onelook(seleted_word, prefix5)
+    onelook6 = search_onelook(seleted_word, prefix6)
+
+    onelook_res1 = onelook1.first(50).map{|x| { word: x["word"], syn: x["tags"].include?("syn").to_s} }
+    onelook_res2 = onelook2.first(50).map{|x| { word: x["word"], syn: x["tags"].include?("syn").to_s} }
+    onelook_res3 = onelook3.first(50).map{|x| { word: x["word"], syn: x["tags"].include?("syn").to_s} }
+    onelook_res4 = onelook4.first(50).map{|x| { word: x["word"], syn: x["tags"].include?("syn").to_s} }
+    onelook_res5 = onelook5.first(50).map{|x| { word: x["word"], syn: x["tags"].include?("syn").to_s} }
+    onelook_res6 = onelook6.first(50).map{|x| { word: x["word"], syn: x["tags"].include?("syn").to_s} }
+
+    onelook_res1.shift()
+    onelook_res2.shift()
+    onelook_res3.shift()
+    onelook_res4.shift()
+    onelook_res5.shift()
+    onelook_res6.shift()
+
     render json: { success: true, data: {
       expand_synnets: data,
       seleted_word: seleted_word,
-      onelook_res: onelook_res,
-      index: index
+      onelook_res1: onelook_res1,
+      onelook_res2: onelook_res2,
+      onelook_res3: onelook_res3,
+      onelook_res4: onelook_res4,
+      onelook_res5: onelook_res5,
+      onelook_res6: onelook_res6,
+      index: index,
+      prefix1: prefix1,
+      prefix2: prefix2,
+      prefix3: prefix3,
+      prefix4: prefix4,
+      prefix5: prefix5,
+      prefix6: prefix6
+
     }}
     # concatenated_string = "['purpose of' #{seleted_word}]"
 
-  rescue
+  rescue => e
+    Rails.logger.info(e.inspect)
     render json: {success: false}
   end
 

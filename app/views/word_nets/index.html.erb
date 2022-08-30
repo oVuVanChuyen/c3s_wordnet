@@ -2,12 +2,23 @@
 
 <h1>Word Nets</h1>
 
-
+<div class="spinner-border text-success" style="position: fixed; display: none;
+  left: 50%;
+  top: 50%;
+  z-index: 9999;" role="status">
+  <span class="sr-only">Loading...</span>
+</div>
 <table>
   <thead>
     <tr>
       <th>Keyword</th>
-      <th colspan="3">Prefix</th>
+      <th >Prefix1</th>
+      <th >Prefix2</th>
+      <th >Prefix3</th>
+      <th >Prefix4</th>
+      <th >Prefix5</th>
+      <th >Prefix6</th>
+
     </tr>
   </thead>
 
@@ -18,7 +29,22 @@
       </td>
 
       <td>
-        <input class="form-control" id="prefix" type="input" value="purpose"></input>
+        <input class="form-control" id="prefix1" type="input" value="purpose"></input>
+      </td>
+      <td>
+        <input class="form-control" id="prefix2" type="input" value=""></input>
+      </td>
+      <td>
+        <input class="form-control" id="prefix3" type="input" value=""></input>
+      </td>
+      <td>
+        <input class="form-control" id="prefix4" type="input" value=""></input>
+      </td>
+      <td>
+        <input class="form-control" id="prefix5" type="input" value=""></input>
+      </td>
+      <td>
+        <input class="form-control" id="prefix6" type="input" value=""></input>
       </td>
     </tr>
     <tr>
@@ -42,14 +68,67 @@
   </ul>
 
   <h5>3. Show the phase "prefix + selected hypernym": </h5>
-  <span class="show_selected_hypernym">
-  </span>
+
+  <table>
+    <thead>
+      <tr>
+        <th class="show_selected_hypernym1"></th>
+        <th class="show_selected_hypernym2"></th>
+        <th class="show_selected_hypernym3"></th>
+        <th class="show_selected_hypernym4"></th>
+        <th class="show_selected_hypernym5"></th>
+        <th class="show_selected_hypernym6"></th>
+      </tr>
+    </thead>
+  </table>
 
   <br/><br/>
 
   <h5>4. Query OneLook reverse dictionary for the phase: </h5>
-  <ul class="query_onelook">
-  </ul>
+  <table>
+    <thead>
+      <tr>
+        <th class="th1"></th>
+        <th class="th2"></th>
+        <th class="th3"></th>
+        <th class="th4"></th>
+        <th class="th5"></th>
+        <th class="th6"></th>
+      </tr>
+    </thead>
+
+    <tbody>
+      <tr>
+        <td>
+          <ul class="query_onelook1">
+          </ul>
+        </td>
+        <td>
+          <ul class="query_onelook2">
+          </ul>
+        </td>
+        <td>
+          <ul class="query_onelook3">
+          </ul>
+        </td>
+        <td>
+          <ul class="query_onelook4">
+          </ul>
+        </td>
+        <td>
+          <ul class="query_onelook5">
+          </ul>
+        </td>
+        <td>
+          <ul class="query_onelook6">
+          </ul>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+
+  <!-- <ul class="query_onelook">
+  </ul> -->
 
 </div>
 
@@ -58,11 +137,21 @@
 
 <script>
   $("#submit").click(function(){
-    $("ul.query_onelook").empty();
-    $(".show_selected_hypernym").empty();
+    $("ul.query_onelook1").empty();
+    $("ul.query_onelook2").empty();
+    $("ul.query_onelook3").empty();
+    $("ul.query_onelook4").empty();
+    $("ul.query_onelook5").empty();
+    $("ul.query_onelook6").empty();
+    $(".show_selected_hypernym1").empty();
+    $(".show_selected_hypernym2").empty();
+    $(".show_selected_hypernym3").empty();
+    $(".show_selected_hypernym4").empty();
+    $(".show_selected_hypernym5").empty();
+    $(".show_selected_hypernym6").empty();
     $(".hypernynm_tree").empty();
 
-    if($("#prefix").val() == '' || $("#prefix").val() == undefined){
+    if($("#prefix1").val() == '' || $("#prefix1").val() == undefined){
       alert("Prefix cannot be empty")
       return
     }
@@ -91,26 +180,69 @@
   })
 
   $(document).on("click", ".synnet_submit", function(){
-    $("ul.query_onelook").empty();
-    $(".show_selected_hypernym").empty();
+    $(".spinner-border").show();
+    $("ul.query_onelook1").empty();
+    $("ul.query_onelook2").empty();
+    $("ul.query_onelook3").empty();
+    $("ul.query_onelook4").empty();
+    $("ul.query_onelook5").empty();
+    $("ul.query_onelook6").empty();
+
+    $(".show_selected_hypernym1").empty();
+    $(".show_selected_hypernym2").empty();
+    $(".show_selected_hypernym3").empty();
+    $(".show_selected_hypernym4").empty();
+    $(".show_selected_hypernym5").empty();
+    $(".show_selected_hypernym6").empty();
     $(".hypernynm_tree").empty();
 
-    if($("#prefix").val() == '' || $("#prefix").val() == undefined){
+    if($("#prefix1").val() == '' || $("#prefix1").val() == undefined){
       alert("Prefix cannot be empty")
       return
     }
     $.ajax({
       type: "POST",
       url: "/word_nets/hypernym",
-      data: { search: $("#search").val(), index: $(this).closest("li").attr("data-index"), prefix: $("#prefix").val() },
+      data: {
+        search: $("#search").val(),
+        index: $(this).closest("li").attr("data-index"),
+        prefix1: $("#prefix1").val(),
+        prefix2: $("#prefix2").val(),
+        prefix3: $("#prefix3").val(),
+        prefix4: $("#prefix4").val(),
+        prefix5: $("#prefix5").val(),
+        prefix6: $("#prefix6").val(),
+       },
       success: function(data){
+         $(".spinner-border").hide();
         if(data.success){
           var expand_synnets = data.data.expand_synnets
-          var results = data.data.onelook_res
+          var results1 = data.data.onelook_res1
+          var results2 = data.data.onelook_res2
+          var results3 = data.data.onelook_res3
+          var results4 = data.data.onelook_res4
+          var results5 = data.data.onelook_res5
+          var results6 = data.data.onelook_res6
           var index = data.data.index;
+
+          var prefix1 = data.data.prefix1
+          var prefix2 = data.data.prefix2
+          var prefix3 = data.data.prefix3
+          var prefix4 = data.data.prefix4
+          var prefix5 = data.data.prefix5
+          var prefix6 = data.data.prefix6
+
           // var selected_li = $("li[data-index="+index+"]");
           var selected_a = $(".hypernynm_tree")
           selected_a.empty();
+          var seleted_word = data.data.seleted_word
+          $(".th1").text(prefix1  +" "+seleted_word )
+          $(".th2").text(prefix2+" "+seleted_word )
+          $(".th3").text(prefix3+" "+seleted_word )
+          $(".th4").text(prefix4+" "+seleted_word )
+          $(".th5").text(prefix5+" "+seleted_word )
+          $(".th6").text(prefix6+" "+seleted_word )
+
           // $($(selected_li).find("a")[0]).empty()
           $.each(expand_synnets, function(i, val){
             var index = parseInt(i)
@@ -123,17 +255,68 @@
             }
           })
 
-          var seleted_word = data.data.seleted_word
-          var prefix = "["+ $("#prefix").val() +" "+seleted_word+"]";
-          $(".show_selected_hypernym").text(prefix);
+
+          var prefix1 =  $("#prefix1").val() +" "+seleted_word ;
+          var prefix2 = $("#prefix2").val() +" "+seleted_word;
+          var prefix3 = $("#prefix3").val() +" "+seleted_word;
+          var prefix4 =  $("#prefix4").val() +" "+seleted_word;
+          var prefix5 =  $("#prefix5").val() +" "+seleted_word;
+          var prefix6 =  $("#prefix6").val() +" "+seleted_word;
+          $(".show_selected_hypernym1").text(prefix1 + " | ");
+          $(".show_selected_hypernym2").text(prefix2 + " | ");
+          $(".show_selected_hypernym3").text(prefix3 + " | ");
+          $(".show_selected_hypernym4").text(prefix4 + " | ");
+          $(".show_selected_hypernym5").text(prefix5 + " | ");
+          $(".show_selected_hypernym6").text(prefix6 + " | ");
 
 
           // $(selected_a).append($("<ul class='one_look_response'>onelook results of "+ data.data.seleted_word+": </ul><br/>"));
-          $.each(results, function(i, v){
+
+          $.each(results1, function(i, v){
             if(v["syn"] == "true"){
-              $("ul.query_onelook").append($("<li class='highlight'><span>"+v['word']+"</span></li>"))
+              $("ul.query_onelook1").append($("<li class='highlight'><span>"+v['word']+"</span></li>"))
             }else{
-              $("ul.query_onelook").append($("<li>"+v['word']+"</li>"))
+              $("ul.query_onelook1").append($("<li>"+v['word']+"</li>"))
+            }
+          })
+
+          $.each(results2, function(i, v){
+            if(v["syn"] == "true"){
+              $("ul.query_onelook2").append($("<li class='highlight'><span>"+v['word']+"</span></li>"))
+            }else{
+              $("ul.query_onelook2").append($("<li>"+v['word']+"</li>"))
+            }
+          })
+
+          $.each(results3, function(i, v){
+            if(v["syn"] == "true"){
+              $("ul.query_onelook3").append($("<li class='highlight'><span>"+v['word']+"</span></li>"))
+            }else{
+              $("ul.query_onelook3").append($("<li>"+v['word']+"</li>"))
+            }
+          })
+
+          $.each(results4, function(i, v){
+            if(v["syn"] == "true"){
+              $("ul.query_onelook4").append($("<li class='highlight'><span>"+v['word']+"</span></li>"))
+            }else{
+              $("ul.query_onelook4").append($("<li>"+v['word']+"</li>"))
+            }
+          })
+
+          $.each(results5, function(i, v){
+            if(v["syn"] == "true"){
+              $("ul.query_onelook5").append($("<li class='highlight'><span>"+v['word']+"</span></li>"))
+            }else{
+              $("ul.query_onelook5").append($("<li>"+v['word']+"</li>"))
+            }
+          })
+
+          $.each(results6, function(i, v){
+            if(v["syn"] == "true"){
+              $("ul.query_onelook6").append($("<li class='highlight'><span>"+v['word']+"</span></li>"))
+            }else{
+              $("ul.query_onelook6").append($("<li>"+v['word']+"</li>"))
             }
           })
         }
