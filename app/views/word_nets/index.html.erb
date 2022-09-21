@@ -29,22 +29,22 @@
       </td>
 
       <td>
-        <input class="form-control" id="prefix1" type="input" value="purpose"></input>
+        <input class="form-control" id="prefix1" type="input" value="plans"></input>
       </td>
       <td>
-        <input class="form-control" id="prefix2" type="input" value=""></input>
+        <input class="form-control" id="prefix2" type="input" value="purpose of"></input>
       </td>
       <td>
-        <input class="form-control" id="prefix3" type="input" value=""></input>
+        <input class="form-control" id="prefix3" type="input" value="technique of"></input>
       </td>
       <td>
-        <input class="form-control" id="prefix4" type="input" value=""></input>
+        <input class="form-control" id="prefix4" type="input" value="provides facilites for"></input>
       </td>
       <td>
-        <input class="form-control" id="prefix5" type="input" value=""></input>
+        <input class="form-control" id="prefix5" type="input" value="influence of"></input>
       </td>
       <td>
-        <input class="form-control" id="prefix6" type="input" value=""></input>
+        <input class="form-control" id="prefix6" type="input" value="devise"></input>
       </td>
     </tr>
     <tr>
@@ -58,6 +58,7 @@
 
 </table>
 <br>
+<h4 style="color:red" class='d-none err'></h4>
 <div class="">
   <h5>1. Execute WordNet Search: </h5>
   <ul class="response">
@@ -143,6 +144,14 @@
     $("ul.query_onelook4").empty();
     $("ul.query_onelook5").empty();
     $("ul.query_onelook6").empty();
+    $(".th1").text("");
+    $(".th2").text("")
+    $(".th3").text("")
+    $(".th4").text("")
+    $(".th5").text("")
+    $(".th6").text("")
+    $(".err").addClass("d-none");
+
     $(".show_selected_hypernym1").empty();
     $(".show_selected_hypernym2").empty();
     $(".show_selected_hypernym3").empty();
@@ -171,6 +180,9 @@
           $.each(data.data,  function(index, val){
             $(".response").append($("<li class='synnet' data-index='"+index+"'><a href='javascript:void(0)' class='synnet_submit'>"+val+"</a></li>"))
           })
+        }else{
+          $(".err").text("Cannot find wordnets of this word. Please try another word");
+          $(".err").removeClass("d-none");
         }
       },
       fail: function(data){
@@ -187,7 +199,13 @@
     $("ul.query_onelook4").empty();
     $("ul.query_onelook5").empty();
     $("ul.query_onelook6").empty();
-
+    $(".th1").text("");
+    $(".th2").text("")
+    $(".th3").text("")
+    $(".th4").text("")
+    $(".th5").text("")
+    $(".th6").text("")
+    $(".err").addClass("d-none");
     $(".show_selected_hypernym1").empty();
     $(".show_selected_hypernym2").empty();
     $(".show_selected_hypernym3").empty();
@@ -215,6 +233,7 @@
        },
       success: function(data){
          $(".spinner-border").hide();
+
         if(data.success){
           var expand_synnets = data.data.expand_synnets
           var results1 = data.data.onelook_res1
@@ -319,6 +338,9 @@
               $("ul.query_onelook6").append($("<li>"+v['word']+"</li>"))
             }
           })
+        }else{
+          $(".err").text("Something went wrong! Please try again!")
+          $(".err").removeClass("d-none");
         }
       },
       fail: function(data){

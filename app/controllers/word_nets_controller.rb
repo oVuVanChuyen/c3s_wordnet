@@ -12,6 +12,9 @@ class WordNetsController < ApplicationController
     lemma = WordNet::Lemma.find_all(keyword).first
     synnets = lemma.synsets.map{|x| x.gloss}
     render json: { success: true, data: synnets }
+  rescue => e
+    Rails.logger.info(e.inspect)
+    render json: { success: false, data: { messsage: e.inspect } }
   end
 
   def hypernym
@@ -79,7 +82,7 @@ class WordNetsController < ApplicationController
 
   rescue => e
     Rails.logger.info(e.inspect)
-    render json: {success: false}
+    render json: { success: false, data: { messsage: e.inspect } }
   end
 
   # GET /word_nets/1 or /word_nets/1.json
